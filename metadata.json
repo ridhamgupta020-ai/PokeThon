@@ -1,0 +1,6 @@
+{
+  "name": "PokeThon — 24-Hour Offline Innovation Sprint",
+  "description": "Official platform for PokeThon, a 24-hour offline innovation sprint organized by Fusion Tech Club at PW Institute of Innovation, Noida.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
