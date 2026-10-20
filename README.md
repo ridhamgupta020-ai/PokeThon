@@ -51,6 +51,12 @@ cp .env.example .env.local      # NEXT_PUBLIC_SUPABASE_URL / ANON_KEY / API_BASE
 npm run dev                     # http://localhost:3000
 ```
 
+### Prisma foundation (Next.js)
+
+The Next.js app has a Prisma schema matching the public tables in the Supabase migration. Set `DATABASE_URL` to the transaction-pooler URL and `DIRECT_URL` to the session-pooler URL in `frontend/.env.local`, replacing the password placeholder with the rotated database password (URL-encode special characters). `DIRECT_URL` is used for Prisma CLI operations; the Prisma client uses the pooled `DATABASE_URL`.
+
+Run `cd frontend && npm run db:generate` to generate the Prisma client. The current API routes still run through FastAPI and have not been migrated to Prisma. The SQL migration remains authoritative for triggers and constraints; introspect and review the live schema with `npx prisma db pull` before attempting Prisma migrations.
+
 ## 4. First run checklist
 
 1. Log in as your admin → **/admin → Event & Content**: set event name, event date (drives the countdown), deadline, description, themes, schedule, prizes, sponsors, FAQ, contact and social links. Nothing on the landing page is hard-coded; empty sections show "coming soon".

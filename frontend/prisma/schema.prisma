@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// SQL constraints and triggers remain managed by supabase/migrations.
+// Run `prisma db pull` after configuring real credentials to verify this model
+// against the live database before using Prisma migrations.
+model Profile {
+  id        String   @id @db.Uuid
+  fullName  String   @default("") @map("full_name") @db.Text
+  email     String   @db.Text
+  role      String   @default("participant") @db.Text
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("profiles")
+}
+
+model Team {
+  id           String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamName     String       @map("team_name") @db.Text
+  teamLeaderId String       @map("team_leader_id") @db.Uuid
+  teamCode     String       @unique @default(dbgenerated("upper(substr(encode(gen_random_bytes(4), 'hex'::text), 1, 8))")) @map("team_code") @db.Text
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  members      TeamMember[]
+  project      Project?
+
+  @@index([teamLeaderId], map: "teams_leader_idx")
+  @@map("teams")
+}
+
+model TeamMember {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId    String   @map("team_id") @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([teamId], map: "team_members_team_idx")
+  @@map("team_members")
+}
+
+model Registration {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registrationNumber String   @unique @default(dbgenerated("public.next_registration_number()")) @map("registration_number") @db.Text
+  userId             String   @unique @map("user_id") @db.Uuid
+  fullName           String   @map("full_name") @db.Text
+  email              String   @db.Text
+  phone              String   @db.Text
+  college            String   @db.Text
+  course             String   @db.Text
+  studyYear          Int      @map("study_year") @db.SmallInt
+  city               String   @db.Text
+  state              String   @db.Text
+  githubUrl          String   @map("github_url") @db.Text
+  linkedinUrl        String?  @map("linkedin_url") @db.Text
+  skills             String[] @default([])
+  participationType  String   @map("participation_type") @db.Text
+  teamName           String?  @map("team_name") @db.Text
+  teamSize           Int      @default(1) @map("team_size") @db.SmallInt
+  projectIdea        String?  @map("project_idea") @db.Text
+  status             String   @default("pending") @db.Text
+  adminNotes         String?  @map("admin_notes") @db.Text
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@index([status], map: "registrations_status_idx")
+  @@index([createdAt(sort: Desc)], map: "registrations_created_idx")
+  @@map("registrations")
+}
+
+model Project {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId           String    @unique @map("team_id") @db.Uuid
+  title            String    @db.Text
+  description      String    @db.Text
+  repositoryUrl    String?   @map("repository_url") @db.Text
+  demoUrl          String?   @map("demo_url") @db.Text
+  submissionStatus String    @default("draft") @map("submission_status") @db.Text
+  submittedAt      DateTime? @map("submitted_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  team             Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@map("projects")
+}
+
+model Announcement {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title     String   @db.Text
+  content   String   @db.Text
+  published Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("announcements")
+}
+
+model EventSetting {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventName            String    @default("Pocket Thon") @map("event_name") @db.Text
+  eventDate            DateTime? @map("event_date") @db.Timestamptz(6)
+  registrationDeadline DateTime? @map("registration_deadline") @db.Timestamptz(6)
+  registrationOpen     Boolean   @default(true) @map("registration_open")
+  description          String    @default("") @db.Text
+  content              Json      @default("{}") @db.JsonB
+  updatedAt            DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("event_settings")
+}
