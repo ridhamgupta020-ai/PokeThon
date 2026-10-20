@@ -6,7 +6,9 @@ import { Countdown } from "@/components/Countdown";
 import { EmptyState } from "@/components/ui";
 import { publicGet, type EventSettings } from "@/lib/api";
 
-export const revalidate = 30;
+// Service bindings are injected at runtime, so this page must not call the API
+// while Next.js is statically generating pages during the build.
+export const dynamic = "force-dynamic";
 
 type Stats = { participants: number; teams: number; projects: number };
 

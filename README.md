@@ -66,15 +66,12 @@ Run `cd frontend && npm run db:generate` to generate the Prisma client. The curr
 
 ## 5. Deployment
 
-**Backend (Render / Railway / Fly.io / any Docker host)**
-- Deploy `backend/` with its `Dockerfile` (listens on `$PORT`).
-- Set `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, (`SUPABASE_JWT_SECRET` if legacy), `CORS_ORIGINS=https://your-frontend-domain`.
-- Health check: `GET /health`.
-
-**Frontend (Vercel)**
-- Import the repo, set **Root Directory** to `frontend`.
-- Env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_API_BASE_URL=https://your-backend-domain`.
-- Update Supabase redirect URLs to the production domain.
+**Vercel multi-service project**
+- Import the repository root so Vercel can read the root `vercel.json`. Keep the project root at `.`; the file defines independent `backend` and `frontend` services.
+- `/api/*` routes to FastAPI and every other path routes to Next.js. The frontend's server-side API calls use the `BACKEND_URL` service binding. Browser calls use the public same-origin `/api/*` route.
+- Configure the backend environment with `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `SUPABASE_JWT_SECRET` only for legacy HS256 projects. Configure frontend Supabase variables `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and the Prisma database variables if Prisma-backed code is used.
+- Update Supabase redirect URLs to the production domain. The API allows same-origin browser calls; set `CORS_ORIGINS` only if the API will also be called directly from another origin.
+- The backend health check is `GET /health` on its service URL; it is not part of the public `/api/*` route.
 
 ## Notes & known limits
 

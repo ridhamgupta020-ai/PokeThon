@@ -1,6 +1,11 @@
 import { createClient } from "@/lib/supabase/client";
 
-export const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+// Browser requests use the public same-origin /api rewrite. Server-side calls
+// use Vercel's runtime service binding, which is unavailable during builds.
+export const API_BASE =
+  typeof window === "undefined"
+    ? process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
+    : process.env.NEXT_PUBLIC_API_BASE_URL || (process.env.NODE_ENV === "development" ? "http://localhost:8000" : "");
 
 export class ApiError extends Error {
   status: number;
