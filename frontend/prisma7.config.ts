@@ -1,5 +1,5 @@
 import { config as loadEnv } from "dotenv";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
 
 loadEnv({ path: ".env.local" });
 
@@ -9,6 +9,9 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: env("DIRECT_URL"),
+    // `prisma generate` loads this config but does not connect to the database.
+    // Keep generation working in build environments without DIRECT_URL; Prisma
+    // commands that access Supabase still require a configured connection URL.
+    url: process.env.DIRECT_URL ?? "",
   },
 });
