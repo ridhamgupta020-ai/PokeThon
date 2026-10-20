@@ -9,8 +9,9 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@supabase/server": "^1.9.2",
     "@supabase/ssr": "^0.5.2",
-    "@supabase/supabase-js": "^2.47.10",
+    "@supabase/supabase-js": "^2.118.0",
     "framer-motion": "^11.15.0",
     "next": "^14.2.35",
     "react": "^18.3.1",
