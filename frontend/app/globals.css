@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { scroll-behavior: smooth; }
+body { @apply bg-white text-ink antialiased; }
+:focus-visible { outline: 2px solid #CA8A04; outline-offset: 2px; }
+
+@layer components {
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60; }
+  .btn-primary { @apply bg-brand-400 text-ink shadow-sm hover:bg-brand-300 hover:shadow-glow; }
+  .btn-dark { @apply bg-ink text-white hover:bg-neutral-800; }
+  .btn-ghost { @apply border border-neutral-300 bg-white text-ink hover:border-ink; }
+  .btn-danger { @apply bg-red-600 text-white hover:bg-red-700; }
+  .card { @apply rounded-2xl border border-neutral-200/70 bg-white shadow-card; }
+  .input { @apply w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-sm placeholder:text-neutral-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-300; }
+  .input-error { @apply border-red-500 focus:border-red-500 focus:ring-red-200; }
+  .label { @apply mb-1.5 block text-sm font-medium text-neutral-800; }
+  .badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold; }
+  .section { @apply mx-auto w-full max-w-6xl px-5 py-20 sm:px-8; }
+  .h2 { @apply text-3xl font-extrabold tracking-tight sm:text-4xl; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
