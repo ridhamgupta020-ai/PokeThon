@@ -23,7 +23,7 @@ pocket-thon/
 2. SQL Editor → run `supabase/migrations/0001_schema.sql`, then `0002_rls.sql`.
 3. Authentication → Providers: keep **Email** enabled and turn on **Confirm email**.
 4. Authentication → URL Configuration: set Site URL to your frontend URL and add `https://<your-domain>/auth/callback` (and `http://localhost:3000/auth/callback` for dev) to Redirect URLs.
-5. Project Settings → API: copy the Project URL, `anon` key and `service_role` key. If your project still uses the legacy JWT secret, also copy it (Settings → JWT); projects on asymmetric signing keys need no secret.
+5. Project Settings → API: copy the Project URL, publishable key, and backend-only secret key. If your project still uses the legacy JWT secret, also copy it (Settings → JWT); projects on asymmetric signing keys need no JWT secret.
 6. **Create the first admin** (only possible from the SQL editor): sign up through the site, then run
    ```sql
    update public.profiles set role = 'admin' where email = 'you@example.com';
@@ -46,8 +46,9 @@ Optional emails: set `RESEND_API_KEY`, `EMAIL_FROM` (a verified sender) and `ADM
 
 ```bash
 cd frontend
+cp .env.example .env.local      # configure Supabase, API_BASE_URL, and Prisma URLs
 npm install
-cp .env.example .env.local      # NEXT_PUBLIC_SUPABASE_URL / ANON_KEY / API_BASE_URL
+npm run db:generate
 npm run dev                     # http://localhost:3000
 ```
 
@@ -72,7 +73,7 @@ Run `cd frontend && npm run db:generate` to generate the Prisma client. The curr
 
 **Frontend (Vercel)**
 - Import the repo, set **Root Directory** to `frontend`.
-- Env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_API_BASE_URL=https://your-backend-domain`.
+- Env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_API_BASE_URL=https://your-backend-domain`.
 - Update Supabase redirect URLs to the production domain.
 
 ## Notes & known limits
